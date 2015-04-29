@@ -30,6 +30,8 @@ module Mongokit
 
         options.merge!(_options)
 
+        @_mk_counter_options = options
+
         # Defining custom method
         send :define_method, "reserve_#{options[:column]}!".to_sym do
           self[column] = Mongokit::Counter.next(self, options)
@@ -41,6 +43,14 @@ module Mongokit
             record[column] = Mongokit::Counter.next(self, options)
           end
         end
+      end
+
+      def auto_incrementer_current
+        Mongokit::Models::AutoIncrement.counter(self.collection_name, @_mk_counter_options, { next: false })
+      end
+
+      def auto_incrementer_next
+        Mongokit::Models::AutoIncrement.counter(self.collection_name, @_mk_counter_options, { next: true })
       end
     end
   end
