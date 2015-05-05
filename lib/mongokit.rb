@@ -3,5 +3,6 @@ require 'mongoid'
 require 'mongokit/version'
 
 module Mongokit
-  autoload :AutoIncrementer, 'mongokit/auto_incrementer'
+  autoload :AutoIncrement, 'mongokit/auto_increment'
+  autoload :SecureToken, 'mongokit/secure_token'
 end
