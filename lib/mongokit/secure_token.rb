@@ -21,19 +21,11 @@ module Mongokit
       #   user = User.new
       #   user.save
       #   user.auth_token # => "77TMHrHJFvFDwodq8w7Ev2m7"
-      #   user.regenerate_auth_token # => true
+      #   user.regenerate_auth_token! # => true
       #
       def has_secure_token(attribute, options = {})
         field(attribute, type: String)
         index({ attribute => 1 }, { unique: true })
-
-        define_method("regenerate_#{attribute}") do
-          update_attributes(attribute => self.class.generate_unique_secure_token)
-        end
-
-        before_create do
-          self[attribute] = self.class.generate_unique_secure_token
-        end
 
         @_st_options_ = (options || {}).tap do |o|
           o[:attribute] = attribute
@@ -41,6 +33,19 @@ module Mongokit
           o[:token_length] ||= 16
         end
 
+        before_create do
+          self[attribute] = self.class.generate_unique_secure_token
+        end
+
+        define_method("regenerate_#{attribute}!") do
+          update_attributes(attribute => self.class.generate_unique_secure_token)
+        end
+
+        self.class.instance_eval do
+          define_method("find_by_#{attribute}") do |token|
+            where(attribute => token).first
+          end
+        end
       end
 
       def generate_unique_secure_token
