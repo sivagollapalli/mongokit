@@ -1,7 +1,7 @@
 require 'csv'
 
 module Mongokit
-  module CSVExporter
+  module CsvExporter
     extend ActiveSupport::Concern
 
     module ClassMethods

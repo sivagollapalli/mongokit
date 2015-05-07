@@ -4,9 +4,11 @@ require 'mongokit/version'
 require 'mongokit/mongoid_ext'
 
 module Mongokit
+
   MODULE_NAMES = %w(
     AutoIncrement
     SecureToken
+    Address
   ).inject({}){ |r, m| r[m.underscore.to_sym] = m; r }
 
   MODULE_NAMES.each do |module_name, const_name|
