@@ -2,9 +2,7 @@ require 'securerandom'
 
 module Mongokit
   module SecureToken
-    def self.included(base)
-      base.extend ClassMethods
-    end
+    extend ActiveSupport::Concern
 
     module ClassMethods
       # Example using has_secure_token

@@ -1,13 +1,10 @@
 require 'mongokit/auto_increment/counter'
 require 'mongokit/auto_increment/formater'
-require 'mongokit/models/auto_increment'
+require 'mongokit/models/auto_increment_counter'
 
 module Mongokit
   module AutoIncrement
-
-    def self.included(base)
-      base.extend ClassMethods
-    end
+    extend ActiveSupport::Concern
 
     module ClassMethods
       #
@@ -16,39 +13,43 @@ module Mongokit
       #     include Mongoid::Document
       #     include Mongoid::AutoIncrement
       #
-      #     auto_increment :order_no, type: String
+      #     auto_increment :order_count,
+      #     auto_increment :order_no, pattern: "%Y%m#####"  # Default no symbol is #
       #   end
       #
       def auto_increment(attribute, _options = {})
-        field(attribute, type: _options[:type] || String)
-
         options = {
-          pattern: "%Y%m#####",
-          number_symbol: "#",
-          attribute: attribute,
-          start:  0
+          number_symbol: '#',
+          start:  0,
+          step: 1
         }
 
         options.merge!(_options)
+        options[:attribute] = attribute
+        options[:model] = self
+        options[:type] ||= Integer
 
-        @_auto_incr_options_ = options
+        if options[:pattern]
+          options[:time_format] = Mongokit::Counter.to_time_format(options[:pattern])
+          options[:type] = String
+        end
+
+        field(attribute, type: options[:type])
+
+        # create new record in counter collection
+        Models::AutoIncrementCounter.find_or_create_with_seed(options)
+
+        before_create do |doc|
+          doc[attribute] = Mongokit::Counter.next(options)
+        end
 
         define_method("reserve_#{options[:attribute]}!") do
-          self[attribute] = Mongokit::Counter.next(self, options)
+          self[attribute] = Mongokit::Counter.next(options)
         end
 
-        # Signing before_create
-        before_create do |record|
-          record[attribute] = Mongokit::Counter.next(self, options)
+        define_method("current_#{attribute}_counter") do
+          Models::AutoIncrementCounter.current_counter(options)
         end
-      end
-
-      def auto_incrementer_current
-        Mongokit::Models::AutoIncrement.counter(self.collection_name, @_auto_incr_options_, { next: false })
-      end
-
-      def auto_incrementer_next
-        Mongokit::Models::AutoIncrement.counter(self.collection_name, @_auto_incr_options_, { next: true })
       end
     end
   end

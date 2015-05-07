@@ -1,31 +1,27 @@
 module Mongokit
-  class Counter
-    def self.next(object, options)
-      element = Models::AutoIncrement.find_or_create_by(counter_model_name: object.class.collection_name)
+  module Counter
+    module_function
 
-      if outdated?(element, options) || element.counter == 0
-        element.counter = options[:start]
+    def next(options)
+      record = Models::AutoIncrementCounter.where({
+        counter_model_name: options[:model].collection_name,
+        counter_field: options[:attribute]
+      }).find_and_modify({ '$inc' => { counter: options[:step] }}, new: true)
+
+      return record.counter if options[:pattern].nil?
+
+      if outdated?(record, options[:time_format])
+        record.update_attrinutes(counter: options[:start])
       end
 
-      element.counter += 1
-
-      if element.changed?
-        element.save!
-      else
-        element.touch
-      end
-
-      Formater.new.format(element.counter, options)
+      Formater.new.format(record.counter, options)
     end
 
-    private
-
-    def self.outdated?(record, options)
-      Time.now.strftime(update_event(options)).to_i > record.updated_at.strftime(update_event(options)).to_i
+    def outdated?(record, time_format)
+      Time.now.strftime(time_format).to_i > record.updated_at.strftime(time_format).to_i
     end
 
-    def self.update_event(options)
-      pattern = options[:pattern]
+    def to_time_format(pattern)
       event = String.new
 
       event += '%Y' if pattern.include? '%y' or pattern.include? '%Y'
