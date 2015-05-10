@@ -3,6 +3,8 @@ module Mongokit
     extend ActiveSupport::Concern
 
     module ClassMethods
+      include Options::Store
+
       ADDRESS_FIELDS = {
         address_1:   String,
         address_2:   String,
@@ -21,42 +23,39 @@ module Mongokit
         if options[:add]
           if options[:add].is_a?(Array)
             options[:add] = options[:add].inject({}){|r, f| r[f] = String; r}
+          else
+            fields.merge!(options[:add])
           end
-          fields.merge!(options[:add])
         end
 
-        if options[:except]
-          fields.reject!{|f, _| options[:except].include?(f)}
-        end
-
-        if options[:replace]
-          options[:replace].each { |f| fields[f] = fields.delete(f) }
-        end
+        fields = Options.process(fields, options)
 
         fields.each do |name, type|
           field name, type: type
         end
 
-        @_addrs_fields_ = fields.keys
-        @_full_addrs_fields_ = fields.reject{|f, _| f == :latitude || f == :longitude }.keys
+        mk_options.tap do |o|
+          o.put(:address_fields, fields.keys)
+          o.put(:full_address_fields, fields.reject{|f, _| f == :latitude || f == :longitude }.keys)
+        end
       end
 
       def address_fields
-        @_addrs_fields_
+        mk_options.get(:address_fields)
       end
 
       def full_address(obj, options = nil)
-        fields = @_full_addrs_fields_
+        fields = mk_options.get(:full_address_fields)
 
         if options
-          fields = if options[:only]
-                     options[:only]
-                   elsif options[:except]
-                     @_full_addrs_fields_ - options[:except]
-                   end
+          if options[:only]
+            fields = options[:only]
+          elsif options[:except]
+            fields = fields - options[:except]
+          end
         end
 
-        fields.map{|f| obj[f]}.join(', ')
+        fields.map{|f| obj[f]}.compact.join(', ')
       end
     end
 

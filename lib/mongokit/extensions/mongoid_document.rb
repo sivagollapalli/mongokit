@@ -1,5 +1,5 @@
 module Mongokit
-  module MongoidExt
+  module MongoidDocument
     def mongokit(*modules)
       modules = modules.map(&:to_sym).uniq
 
@@ -14,4 +14,4 @@ module Mongokit
   end
 end
 
-Mongoid::Document::ClassMethods.send :include, Mongokit::MongoidExt
+Mongoid::Document::ClassMethods.send :include, Mongokit::MongoidDocument

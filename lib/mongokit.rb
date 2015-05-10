@@ -1,7 +1,7 @@
 require 'mongoid'
 
 require 'mongokit/version'
-require 'mongokit/mongoid_ext'
+require 'mongokit/extensions/mongoid_document'
 
 module Mongokit
 
@@ -9,9 +9,27 @@ module Mongokit
     AutoIncrement
     SecureToken
     Address
-  ).inject({}){ |r, m| r[m.underscore.to_sym] = m; r }
+    CsvTransformer
+  ).inject({}) do |result, module_name|
+    result[module_name.underscore.to_sym] = module_name
+    result
+  end
 
   MODULE_NAMES.each do |module_name, const_name|
     autoload const_name, "mongokit/#{module_name}"
+  end
+
+  autoload :Options, 'mongokit/utils/options'
+
+  def modules
+    MODULE_NAMES.values
+  end
+
+  def self.config(options = {})
+    options[:load] = Array(options[:load])
+
+    options[:load].each do |module_name|
+      require "mongokit/#{module_name}"
+    end
   end
 end
