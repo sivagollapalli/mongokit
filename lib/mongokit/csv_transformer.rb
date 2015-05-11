@@ -60,7 +60,7 @@ module Mongokit
 
         io.each do |row|
           attrs = io.to_attrs(row, block)
-          self.create(attrs) if attrs
+          create(attrs) if attrs
         end
       end
     end
