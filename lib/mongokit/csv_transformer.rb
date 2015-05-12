@@ -34,7 +34,7 @@ module Mongokit
         end
       end
 
-      def _csv_columns(options = nil)
+      def _csv_columns_(options = nil)
         columns = fields.collect do |f, o|
           if o.class == Mongoid::Fields::Standard && o.type != BSON::ObjectId
             o.name
@@ -46,7 +46,7 @@ module Mongokit
       end
 
       def csv_export(file, criteria, options = {}, &block)
-        columns = _csv_columns(options)
+        columns = _csv_columns_(options)
         io = CsvIO.new(:write, file, columns, options)
 
         criteria.each do |record|
@@ -56,7 +56,7 @@ module Mongokit
       end
 
       def csv_import(file, options = {}, &block)
-        io = CsvIO.new(:read, file, options[:columns] || _csv_columns, options)
+        io = CsvIO.new(:read, file, options[:columns] || _csv_columns_, options)
 
         io.each do |row|
           attrs = io.to_attrs(row, block)

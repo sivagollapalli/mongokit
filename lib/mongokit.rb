@@ -10,6 +10,7 @@ module Mongokit
     SecureToken
     Address
     CsvTransformer
+    ModelHelpers
   ).inject({}) do |result, module_name|
     result[module_name.underscore.to_sym] = module_name
     result
