@@ -35,15 +35,23 @@ module Mongokit
           self[attribute] = self.class.generate_unique_secure_token
         end
 
-        define_method("regenerate_#{attribute}!") do
-          update_attributes(attribute => self.class.generate_unique_secure_token)
-        end
-
-        self.class.instance_eval do
-          define_method("find_by_#{attribute}") do |token|
-            where(attribute => token).first
+        class_eval <<-RUBY, __FILE__, __LINE__ + 1
+          def regenerate_#{attribute}!
+            update_attributes(#{attribute}: self.class.generate_unique_secure_token)
           end
-        end
+        RUBY
+
+        self.class.class_eval <<-RUBY, __FILE__, __LINE__ + 1
+          def find_by_#{attribute}(token)
+            where(#{attribute}: token).first
+          end
+        RUBY
+
+        self.class.class_eval <<-RUBY, __FILE__, __LINE__ + 1
+          def find_by_#{attribute}(token)
+            where(#{attribute}: token).exists?
+          end
+        RUBY
       end
 
       def generate_unique_secure_token

@@ -61,12 +61,7 @@ module Mongokit
     end
 
     def expand_times(pattern)
-      pattern.sub!('%y', Time.now.strftime('%y'))
-      pattern.sub!('%Y', Time.now.strftime('%Y'))
-      pattern.sub!('%d', Time.now.strftime('%d'))
-      pattern.sub!('%m', Time.now.strftime('%m'))
-      pattern.sub!('%M', Time.now.strftime('%M'))
-      pattern.sub('%H',  Time.now.strftime('%H'))
+      Time.now.strftime(pattern)
     end
 
     def digits_size(pattern)
