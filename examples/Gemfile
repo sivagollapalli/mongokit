@@ -1,0 +1,10 @@
+source "https://rubygems.org"
+
+gem 'mongoid', '~> 4.0.2'
+gem 'mongokit', path: '../'
+
+def reload!
+  load "#{File.expand_path(File.dirname(__FILE__))}/app.rb"
+end
+
+#reload!

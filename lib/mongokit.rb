@@ -22,6 +22,8 @@ module Mongokit
 
   autoload :Options, 'mongokit/utils/options'
 
+  MongokitError = Class.new(StandardError)
+
   def modules
     MODULE_NAMES.values
   end
