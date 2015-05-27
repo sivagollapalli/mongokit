@@ -1,4 +1,20 @@
 module Mongokit
+  #
+  # == Example
+  #   Order.in_batches do |orders|
+  #     orders.each do |order|
+  #       puts order.items
+  #     end
+  #   end
+  #
+  #   Order.in_batches(batch_size: 100, start: 50) do |orders|
+  #     ...
+  #   end
+  #
+  #   Order.where(:created_at.gt => Time.now.yesterday).in_batches do |orders|
+  #     ...
+  #   end
+  #
   module FindInBatch
     def in_batches(options = {})
       criteria = self

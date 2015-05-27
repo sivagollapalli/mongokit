@@ -4,6 +4,31 @@ module Mongokit
   module CsvTransformer
     extend ActiveSupport::Concern
 
+    #
+    # == Example
+    #   class Address
+    #     include Mongoid::Document
+    #
+    #     mongokit :csv_transformer
+    #
+    #     field :name
+    #     field :region
+    #     field :district
+    #     field :state
+    #     field :zip_code, type: Integer
+    #
+    #     csv_import_mapping :address, [:name, :zip_code], headers: true do |row, attrs|
+    #       attrs[:zip_code] = attrs[:zip_code].to_i
+    #     end
+    #
+    #     csv_export_mapping :address, [:zip_code, :name, :region] do |row, record|
+    #       row[:zip_code] = "IN-#{row[:zip_code]}"
+    #     end
+    #   end
+    #
+    #   Address.from_address_csv('address.csv') # Import
+    #   Address.to_address_csv('address.csv')   # Export
+    #
     module ClassMethods
       CsvTransformerError = Class.new(StandardError)
 

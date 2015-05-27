@@ -49,7 +49,7 @@ describe Mongokit::ModelHelpers do
 
   describe '#boolean methods' do
     it 'define boolean methods for given values as array with postfix' do
-      model. boolean_methods(:format, %w(t20 odi test), { postfix: 'match' } )
+      model.boolean_methods(:format, %w(t20 odi test), { postfix: 'match' } )
       record = model.new
 
       [:t20_match?, :odi_match?, :test_match?].each do |m|

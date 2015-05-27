@@ -2,6 +2,31 @@ module Mongokit
   module Address
     extend ActiveSupport::Concern
 
+    #
+    # == Example
+    #   class User
+    #     include Mongoid::Document
+    #
+    #     mongokit :address
+    #     has_address
+    #
+    #     # OR
+    #     # has_address(except: [:latitude, :longitude])
+    #     # has_address(replace: {address_1: :street_1, address_2: :street_2})
+    #   end
+    #
+    #   user = User.create({
+    #     address_1:   'Studio 103',
+    #     address_2:   'The Business Centre',
+    #     street:      '61 Wellfield Road',
+    #     city:        'Roath',
+    #     state:       'Cardiff',
+    #     postal_code: 'CF24 3DG',
+    #     country:     'England'
+    #   })
+    #
+    #   user.full_address # Studio 103, The Business Centre, 61 Wellfield Road, Roath, Cardiff, CF24 3DG, England
+    #
     module ClassMethods
       include Options::Store
 

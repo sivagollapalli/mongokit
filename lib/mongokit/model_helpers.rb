@@ -2,6 +2,29 @@ module Mongokit
   module ModelHelpers
     extend ActiveSupport::Concern
 
+    #
+    # == Example
+    #
+    #   class Game
+    #     include Mongoid::Document
+    #
+    #     mongokit :model_helpers
+    #
+    #     field :format, type: String
+    #     field :category, type: Integer
+    #
+    #     multi_fields :city, { venue: 'Mumbai' }, :country  # Default string type
+    #     multi_fields :start_time, :end_time, DateTime
+    #
+    #     field_with_validation(:team_type, inclusion: { in: %w(t20 odi test) })
+    #
+    #     boolean_methods(:format, %w(t20 odi test), { postfix: 'match' } )
+    #   end
+    #
+    #   game = Game.new(format: 't20')
+    #   game.t20_match?  # true
+    #   game.odi_match?  # false
+    #
     module ClassMethods
       def boolean_methods(field_name, values, options = {})
         values = values.zip(values).to_h if values.is_a?(Array)

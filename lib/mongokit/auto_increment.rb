@@ -23,6 +23,10 @@ module Mongokit
       #     auto_increment :order_no, pattern: "%Y%m#####"  # Default numner symbol is #
       #   end
       #
+      #   order = Order.create
+      #   order.order_count  # 1
+      #   order.order_no     # 20150500001
+      #
       def auto_increment(attribute, _options = {})
         options = {
           number_symbol: '#',

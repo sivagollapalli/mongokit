@@ -5,7 +5,7 @@ module Mongokit
     extend ActiveSupport::Concern
 
     module ClassMethods
-      # Example using has_secure_token
+      # == Example
       #
       #   class User
       #     include Mongoid::Document
