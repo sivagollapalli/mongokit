@@ -17,7 +17,11 @@ module Mongokit
           counter_model_name: options[:model].collection_name,
           counter_field: options[:attribute]
         })
-        record.counter = options[:start] if record.new_record?
+
+        if record.new_record?
+          record.counter = options[:start] > 0 ? options[:start] - 1 : options[:start]
+        end
+
         record.save
       end
 

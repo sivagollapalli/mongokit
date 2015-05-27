@@ -37,7 +37,7 @@ module Mongokit
       end
 
       def replace(fields, options)
-        options[:replace].each { |f| fields[f] = fields.delete(f) } if options[:replace]
+        options[:replace].each { |old_f, new_f| fields[new_f] = fields.delete(old_f) } if options[:replace]
         fields
       end
 

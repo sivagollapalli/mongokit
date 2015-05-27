@@ -9,7 +9,7 @@ module Mongokit
         if const_name
           self.send :include, Mongokit.const_get(const_name)
         else
-          raise MongokitError, "#{const_name} note existing in mongokit"
+          raise MongokitError, "#{module_name} not existing in mongokit"
         end
       end
     end

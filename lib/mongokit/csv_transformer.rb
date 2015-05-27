@@ -42,17 +42,21 @@ module Mongokit
         end
 
         columns.compact!
-        options ? Options.process(columns, options) : columns
+        options ? Options.process(options[:columns] || columns, options) : columns
       end
 
       def csv_export(file, criteria, options = {}, &block)
         columns = _csv_columns_(options)
         io = CsvIO.new(:write, file, columns, options)
 
-        criteria.each do |record|
-          row = io.to_row(record, block)
-          io << row if row
+        criteria.in_batches do |records|
+          records.each do |record|
+            row = io.to_row(record, block)
+            io << row if row
+          end
         end
+
+        io.close
       end
 
       def csv_import(file, options = {}, &block)

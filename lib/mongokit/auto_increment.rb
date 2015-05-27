@@ -6,15 +6,21 @@ module Mongokit
   module AutoIncrement
     extend ActiveSupport::Concern
 
+    included do
+      unless included_modules.include?(Mongoid::Timestamps)
+        include Mongoid::Timestamps
+      end
+    end
+
     module ClassMethods
       #
       # == Example
       #   class Order
       #     include Mongoid::Document
-      #     include Mongoid::AutoIncrement
+      #     mongokit :auto_increment
       #
       #     auto_increment :order_count,
-      #     auto_increment :order_no, pattern: "%Y%m#####"  # Default no symbol is #
+      #     auto_increment :order_no, pattern: "%Y%m#####"  # Default numner symbol is #
       #   end
       #
       def auto_increment(attribute, _options = {})
@@ -39,12 +45,12 @@ module Mongokit
         # create new record in counter collection
         Models::AutoIncrementCounter.find_or_create_with_seed(options)
 
-        before_create do |doc|
-          doc[attribute] = Mongokit::Counter.next(options)
+        after_create do |doc|
+          doc.set(attribute => Mongokit::Counter.next(options))
         end
 
-        define_method("reserve_#{options[:attribute]}!") do
-          self[attribute] = Mongokit::Counter.next(options)
+        define_method("reserve_#{attribute}!") do
+          set(attribute => Mongokit::Counter.next(options))
         end
 
         define_method("current_#{attribute}_counter") do

@@ -1,8 +1,5 @@
 require 'mongoid'
 
-require 'mongokit/version'
-require 'mongokit/extensions/mongoid_document'
-
 module Mongokit
 
   MODULE_NAMES = %w(
@@ -24,7 +21,7 @@ module Mongokit
 
   MongokitError = Class.new(StandardError)
 
-  def modules
+  def self.modules
     MODULE_NAMES.values
   end
 
@@ -36,3 +33,7 @@ module Mongokit
     end
   end
 end
+
+require 'mongokit/version'
+require 'mongokit/extensions/mongoid_document'
+require 'mongokit/find_in_batch'

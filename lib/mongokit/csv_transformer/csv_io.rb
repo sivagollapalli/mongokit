@@ -1,8 +1,12 @@
+require 'forwardable'
 require 'csv'
 
 module Mongokit
   class CsvIO
     attr_reader :csv, :column_mapping, :columns, :options
+
+    extend Forwardable
+    def_delegators :@csv, :<<, :readline, :close, :each
 
     def initialize(operation, file, columns, options = {})
       @options = options
@@ -36,14 +40,6 @@ module Mongokit
       end
     end
 
-    def <<(row)
-      csv << row
-    end
-
-    def readline
-      csv.readline
-    end
-
     def to_attrs(row, block)
       attrs = column_mapping.inject({}) do |r, (f, pos)|
         r[f] = row[pos]
@@ -67,10 +63,5 @@ module Mongokit
       row
     end
 
-    def each(&block)
-      csv.each do |row|
-        yield row
-      end
-    end
   end
 end
