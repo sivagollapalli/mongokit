@@ -34,7 +34,7 @@ module Mongokit
       return if options[:headers].nil?
 
       if options[:headers] === true
-        csv << column_mapping.map { |f, _|  f.titleize }
+        csv << column_mapping.map { |f, _|  f.to_s.titleize }
       else
         csv << options[:headers]
       end

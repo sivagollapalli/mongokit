@@ -5,8 +5,6 @@ require 'csv'
 
 Mongoid.load!("#{File.expand_path(File.dirname(__FILE__))}/mongoid.yml", :production)
 
-Mongokit.config(load: :find_in_batch)
-
 class ZipCode
   include Mongoid::Document
 

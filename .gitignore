@@ -7,6 +7,5 @@
 /pkg/
 /spec/reports/
 /tmp/
-/examples/
 *.swp
 /spec/tmp/

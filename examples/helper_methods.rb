@@ -1,10 +1,9 @@
 require_relative 'common'
-require 'pp'
 
 class Match
   include Mongoid::Document
 
-  mongokit :helper_methods
+  mongokit :model_helpers
 
   field :format, type: String
   field :team_type, type: Integer, default: 0
