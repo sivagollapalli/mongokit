@@ -1,15 +1,15 @@
 # Mongokit
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/mongokit`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Mongoid helpers like export/import csv, autoincrement, find in batch, address helper, securetoken field, boolean methods
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'mongokit', github: 'jiren/mongokit'
+gem 'mongokit', '0.0.1'
+
+gem 'mongokit', github: 'jiren/mongokit' # master brach
 ```
 
 And then execute:
@@ -18,11 +18,11 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install mongokit # NOTE: It will not work because gem is not published
+    $ gem install mongokit 
 
 ## Usage
 
-TODO: Write usage instructions here
+Check examples folder
 
 ## Development
 
