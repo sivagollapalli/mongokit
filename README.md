@@ -123,7 +123,7 @@ Or install it yourself as:
     end
     ```
 
-Check examples folder
+Check [examples](https://github.com/jiren/mongokit/tree/master/examples) for more detail
 
 ## Development
 
