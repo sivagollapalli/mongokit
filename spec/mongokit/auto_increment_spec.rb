@@ -51,11 +51,11 @@ describe Mongokit::AutoIncrement do
     order = model.create
     expect(order.order_no).to include(Time.now.strftime('%Y%m'))
 
-    time =  Time.parse('2015-06-26 00:00:00 +0530')
+    time = Time.now.next_month
     allow(Time).to receive(:now).and_return(time)
 
     order = model.create
-    expect(order.order_no).to include(Time.now.strftime('20150600001'))
+    expect(order.order_no).to include(Time.now.strftime('%Y%m00001'))
   end
 
   it 'set default start number' do
