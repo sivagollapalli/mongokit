@@ -20,7 +20,7 @@ module Mongokit
       #     mongokit :auto_increment
       #
       #     auto_increment :order_count,
-      #     auto_increment :order_no, pattern: "%Y%m#####"  # Default numner symbol is #
+      #     auto_increment :order_no, pattern: "%Y%m#####"  # Default number symbol is #
       #   end
       #
       #   order = Order.create
@@ -50,7 +50,10 @@ module Mongokit
         Models::AutoIncrementCounter.find_or_create_with_seed(options)
 
         after_create do |doc|
-          doc.set(attribute => Mongokit::Counter.next(options))
+          condition = true
+          condition = options[:if].to_proc.call(doc) if options[:if]
+
+          doc.set(attribute => Mongokit::Counter.next(options)) if condition 
         end
 
         define_method("reserve_#{attribute}!") do
