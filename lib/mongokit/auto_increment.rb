@@ -38,6 +38,7 @@ module Mongokit
         options[:attribute] = attribute
         options[:model] = self
         options[:type] ||= Integer
+        condition = options[:if] || true
 
         if options[:pattern]
           options[:time_format] = Mongokit::Counter.to_time_format(options[:pattern])
@@ -50,10 +51,15 @@ module Mongokit
         Models::AutoIncrementCounter.find_or_create_with_seed(options)
 
         after_create do |doc|
-          condition = true
-          condition = options[:if].to_proc.call(doc) if options[:if]
+          satisfied = if condition.class == TrueClass
+                        true
+                      elsif condition.class == Proc
+                        condition.call(doc)
+                      else
+                        doc.instance_eval { eval(condition.to_s) }
+                      end
 
-          doc.set(attribute => Mongokit::Counter.next(options)) if condition 
+          doc.set(attribute => Mongokit::Counter.next(options)) if satisfied 
         end
 
         define_method("reserve_#{attribute}!") do

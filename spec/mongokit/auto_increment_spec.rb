@@ -10,8 +10,14 @@ describe Mongokit::AutoIncrement do
 
       mongokit :auto_increment
 
-      auto_increment :order_no, pattern: "%Y%m#####", if: :condition
-      auto_increment :order_count
+      auto_increment :order_no, pattern: "%Y%m#####", if: Proc.new{|order| order.condition }
+      auto_increment :order_count, if: :some_private_method
+
+      private
+
+      def some_private_method
+        true
+      end
     end
   end
 
@@ -49,7 +55,7 @@ describe Mongokit::AutoIncrement do
     end
   end
 
-  it "increments counter only when condition met" do
+  it "increments counter only when condition is satisfied and condition type is Proc" do
     order = model.create(condition: true)
     expect(model.count).to eq(1)
     order_no = Time.now.strftime('%Y%m#####')
@@ -65,6 +71,22 @@ describe Mongokit::AutoIncrement do
     order_no = Time.now.strftime('%Y%m#####')
     order_no.gsub!('#####', "%05d" % 2.to_s)
     expect(order2.order_no).to eq(order_no)
+  end
+
+  it "increments the counter only when condition is satified and condition type is a private method" do
+    order = model.create
+    expect(model.count).to eq(1)
+    expect(order.order_count).to eq(1)
+
+    order1 = model.new
+    allow(order1).to receive(:some_private_method).and_return(false)
+    order1.save
+    expect(model.count).to eq(2)
+    expect(order1.order_count).to eq(nil)
+
+    order2 = model.create
+    expect(model.count).to eq(3)
+    expect(order2.order_count).to eq(2)
   end
 
   it 'reset counter for next month' do
