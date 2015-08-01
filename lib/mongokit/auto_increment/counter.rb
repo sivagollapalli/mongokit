@@ -10,9 +10,9 @@ module Mongokit
 
       return record.counter if options[:pattern].nil?
 
-      if outdated?(record, options[:time_format])
-        record.set(counter: options[:start] + options[:step])
-      end
+      #if outdated?(record, options[:time_format])
+      #  record.set(counter: options[:start] + options[:step])
+      #end
 
       Formater.new.format(record.counter, options)
     end
